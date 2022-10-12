@@ -15,14 +15,14 @@ struct tile
     material type;
 };
 
-#define NROWS 12
-#define NCOLS 16
+int nrows;
+int ncols;
 
-void printBoard(int x, int y, tile playground[NROWS][NCOLS])
+void printBoard(int x, int y, tile **playground)
 {
-    for (int i = 0; i < NROWS; i++)
+    for (int i = 0; i < nrows; i++)
     {
-        for (int j = 0; j < NCOLS; j++)
+        for (int j = 0; j < ncols; j++)
         {
             if (i == x && y == j)
             {
@@ -41,26 +41,26 @@ void printBoard(int x, int y, tile playground[NROWS][NCOLS])
     }
 }
 
-auto movePlayer(int x, int y, tile playground[NROWS][NCOLS], string input)
+auto movePlayer(int x, int y, tile **playground, char input)
 {
     struct res
     {
         int x, y;
     };
 
-    if (input.find('l') != string::npos && !playground[x][y - 1].isWall)
+    if (input == 'l' && !playground[x][y - 1].isWall)
     {
         y--;
     }
-    else if (input.find('r') != string::npos && !playground[x][y + 1].isWall)
+    else if (input == 'r' && !playground[x][y + 1].isWall)
     {
         y++;
     }
-    else if (input.find('u') != string::npos && !playground[x - 1][y].isWall)
+    else if (input == 'u' && !playground[x - 1][y].isWall)
     {
         x--;
     }
-    else if (input.find('d') != string::npos && !playground[x + 1][y].isWall)
+    else if (input == 'd' && !playground[x + 1][y].isWall)
     {
         x++;
     }
@@ -69,17 +69,26 @@ auto movePlayer(int x, int y, tile playground[NROWS][NCOLS], string input)
 
 int main()
 {
+    cin >> nrows;
+    cin >> ncols;
+
     int x, y;
     x = y = 5;
 
-    tile playground[NROWS][NCOLS];
-    for (int i = 0; i < NROWS; i++)
+    tile **playground = new tile *[nrows];
+
+    for (int i = 0; i < nrows; i++)
     {
-        for (int j = 0; j < NCOLS; j++)
+        playground[i] = new tile[ncols];
+    }
+
+    for (int i = 0; i < nrows; i++)
+    {
+        for (int j = 0; j < ncols; j++)
         {
             playground[i][j].x = j;
             playground[i][j].y = i;
-            playground[i][j].isWall = (j == 0 || i == (NROWS - 1) || (i == 0 && j != 3) || j == (NCOLS - 1));
+            playground[i][j].isWall = (j == 0 || i == (nrows - 1) || (i == 0 && j != 3) || j == (ncols - 1));
             if (playground[i][j].isWall)
             {
                 playground[i][j].type = stone;
@@ -93,18 +102,20 @@ int main()
 
     printBoard(x, y, playground);
 
-    while (true)
+    string input;
+    cin >> input;
+
+    for (int i = 0; i < input.length(); i++)
     {
-        string input;
-        cin >> input;
-        if (input.find('q') != string::npos)
+        if (input[i] == 'q')
         {
             return 0;
         }
-        auto [rx, ry] = movePlayer(x, y, playground, input);
+
+        auto [rx, ry] = movePlayer(x, y, playground, input[i]);
         x = rx;
         y = ry;
         printBoard(x, y, playground);
-        cout << endl;
     }
+    exit(1);
 }
