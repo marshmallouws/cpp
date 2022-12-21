@@ -73,7 +73,8 @@ int main()
     cin >> ncols;
 
     int x, y;
-    x = y = 5;
+    x = ncols / 2;
+    y = nrows / 2;
 
     tile **playground = new tile *[nrows];
 
@@ -117,5 +118,5 @@ int main()
         y = ry;
         printBoard(x, y, playground);
     }
-    exit(1);
+    exit(0);
 }
